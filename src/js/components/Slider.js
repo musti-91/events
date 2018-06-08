@@ -1,19 +1,23 @@
 import React from "react";
 import Carousel from "nuka-carousel";
-import { Icon } from "semantic-ui-react";
 
 export const Slider = props => {
+  const imageContainer = {
+    display: "block",
+    width: "100%",
+    height: "auto",
+    backgroundColor: "red"
+  };
+  let elements = props.getLikedEvents();
   return (
-    <Carousel>
-      {props.likedEvents.map((slider, index) => (
+    <Carousel autoplay={true} autoplayInterval={3000} wrapAround={true}>
+      {elements.map((el, index) => (
         <div key={index}>
-          <h2>{slider.title}</h2>
-          <img src={slider.img} alt={slider.title} />
-          <p>{slider.description}</p>
-          <a>
-            <Icon name="heart" color="green" />
-            {slider.nrOfLiked}
-          </a>
+          <h2>{el.title}</h2>
+          <div className={imageContainer}>
+            <img src={el.img} alt={el.title} />
+          </div>
+          <p>{el.description}</p>
         </div>
       ))}
     </Carousel>

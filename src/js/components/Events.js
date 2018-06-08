@@ -9,10 +9,10 @@ const Events = props => (
     <Grid.Row stretched>
       <Grid.Column>
         <Segment>
-          <Slider likedEvents={props.likedEvents} />
+          <Slider getLikedEvents={props.getLikedEvents} />
         </Segment>
         <Segment>
-          <EventWorldMap address={props.events} />
+          <EventWorldMap events={props.events} />
         </Segment>
       </Grid.Column>
       <Grid.Column>
