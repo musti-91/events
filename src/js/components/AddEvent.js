@@ -1,65 +1,153 @@
 import React, { Component } from "react";
 import { Form, Button, Icon, Header } from "semantic-ui-react";
-
-const Wrapper = {
-  width: "80%",
-  height: "auto",
-  margin: "0 auto"
-};
+import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import Geocode from "react-geocode";
 class AddEvent extends Component {
-  handleSubmit = e => {
-    console.log(e.target.value);
+  constructor(props) {
+    super();
+    this.state = {
+      title: "",
+      img: "",
+      date: moment() ? moment().toString() : "",
+      nrOfLiked: 0,
+      city: "",
+      fullAddress: "",
+      location: {
+        lat: 0,
+        lng: 0
+      },
+      isLiked: true,
+      price: 0,
+      description: ""
+    };
+  }
+  onTitleChange = e => {
+    this.setState({
+      title: e.target.value
+    });
   };
+  onCityChange = e => {
+    this.setState({
+      city: e.target.value
+    });
+  };
+  onPriceChanged = e => {
+    this.setState({
+      price: e.target.value
+    });
+  };
+  onFileUpload = e => {
+    this.setState({
+      img: e.target.value
+    });
+  };
+  onDateSelectChange = dateResponse => {
+    let dateInString = dateResponse._d.toString();
+    dateInString = dateInString.substring(0, dateInString.indexOf("G"));
+    this.setState({
+      date: dateInString
+    });
+  };
+  onAddressChange = e => {
+    if (e.target.value === "") {
+      return false;
+    } else {
+      Geocode.fromAddress(e.target.value).then(
+        response => {
+          const { lat, lng } = response.results[0].geometry.location;
+          this.setState({
+            location: {
+              lat: lat,
+              lng: lng
+            }
+          });
+        },
+        error => {
+          console.error(error);
+        }
+      );
+    }
+  };
+  onDescriptionChange = e => {
+    this.setState({
+      description: e.target.value
+    });
+  };
+  onSubmit = e => {
+    this.props.addEvent(this.state);
+  };
+
   render() {
     return (
-      <div style={Wrapper}>
+      <div>
         <Header size="huge">Add Event</Header>
-        <Form size="large" onSubmit={this.handleSubmit}>
-          <Form.Group>
-            <Form.Input fluid label="Title" placeholder="title" width={10} />
-            <Form.Input
-              fluid
-              label="Place"
-              placeholder="ex: lotto arena"
-              width={6}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Input fluid label="Price" placeholder="0.0 €" width={4} />
-          </Form.Group>
-          <Form.Group>
-            <Form.Input fluid label="Day" placeholder="day" width={2} />
-            <Form.Input fluid label="Month" placeholder="month" width={2} />
-            <Form.Input fluid label="Year" placeholder="year" width={4} />
-            <Form.Input fluid label="Time" placeholder="time" width={8} />
-          </Form.Group>
-          {/* <Form.Select options={options} placeholder="Gender" error /> */}
+        <Header size="small">All fields are required</Header>
+        <Form size="large" onSubmit={this.onSubmit}>
           <Form.Group>
             <Form.Input
               fluid
-              label="Street"
-              placeholder="ex: turnhoutsebaan"
-              width={6}
+              label="Title"
+              placeholder="title"
+              width={10}
+              onChange={this.onTitleChange}
+              value={this.state.title}
             />
             <Form.Input
               fluid
-              label="Building number"
-              placeholder="ex: 12, bus 202"
+              label="City, Place .."
+              placeholder="ex: Antwerpen,Lotto Arena"
               width={6}
+              value={this.state.city}
+              onChange={this.onCityChange}
             />
+          </Form.Group>
+          <Form.Group>
             <Form.Input
               fluid
-              label="City"
-              placeholder="ex: Awtwerpen"
+              label="Price"
+              placeholder="00.00 €"
               width={4}
+              onChange={this.onPriceChanged}
             />
-            <Form.Input fluid label="Post Code" placeholder="2140" width={2} />
+            <Form.Input
+              fluid
+              icon="upload"
+              label="Upload photo"
+              placeholder="uploaed image"
+              width={6}
+              type="file"
+              onChange={this.onFileUpload}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Field>
+              <label>Date & Time</label>
+              <DatePicker
+                selected={moment(this.state.date)}
+                onChange={this.onDateSelectChange}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="LLL"
+                timeCaption="time"
+              />
+            </Form.Field>
+            <Form.Input
+              fluid
+              label="Full address"
+              placeholder="ex: turnhoutsebaan 12, bus 30, 2140 Borgerhout"
+              width={14}
+              value={this.state.address}
+              onChange={this.onAddressChange}
+            />
           </Form.Group>
           <Form.TextArea
             label="Description"
             placeholder="describe what your event is all about"
+            onChange={this.onDescriptionChange}
           />
-          <Form.Checkbox label="agree the terms otherwise will not send it" />
           <Form.Group label="submit">
             <Button animated primary>
               <Button.Content visible>Send</Button.Content>

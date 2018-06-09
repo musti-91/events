@@ -12,13 +12,7 @@ export const EventList = props => {
                 <Card.Content>
                   <Card.Header>{event.title}</Card.Header>
                   <Card.Meta>
-                    <span className="date">{event.date.day}</span>
-                    <span className="date">{event.date.dayNr}</span>
-                    <span className="date">{event.date.month}</span>
-                    <span className="date">{event.date.year}</span>
-                    <span className="date">
-                      {event.date.from}-{event.date.to}
-                    </span>
+                    <span className="date">{event.date}</span>
                   </Card.Meta>
                   <Card.Meta className="price" color="green">
                     <span className="price">{event.price} €</span>
@@ -27,8 +21,12 @@ export const EventList = props => {
                 </Card.Content>
                 <Card.Content extra index={index}>
                   <p index={index} onClick={props.addToFavourite}>
-                    <Icon name="heart" color="green" />
+                    <Icon name="heart" color="green" size="large" />
                     <span>{event.nrOfLiked}</span>
+                  </p>
+                  <p index={index} onClick={props.deleteEvent}>
+                    <Icon name="delete calendar" color="red" size="large" />
+                    Remove
                   </p>
                 </Card.Content>
               </Card>

@@ -4,7 +4,9 @@ import Events from "./components/Events";
 import AddEvent from "./components/AddEvent";
 import About from "./components/About";
 import NotFoundPage from "./components/NotFoundPage";
-import { Menu } from "semantic-ui-react";
+import { Menu, Container } from "semantic-ui-react";
+var _ = require("lodash");
+
 /**
  * Events app:events =>events component
  * custom footer will added later
@@ -19,16 +21,10 @@ class App extends Component {
           title: "Data Innovation Summit 2018 - #DISUMMIT - A.I.Demystified",
           img:
             "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F44571561%2F231918327288%2F1%2Foriginal.jpg?h=150&w=300&auto=compress&rect=0%2C198%2C842%2C421&s=ae8a4c0c9dd04a07357d5cf4f104fd90",
-          date: {
-            day: "Wednesday",
-            dayNr: 27,
-            month: "June",
-            year: "2018",
-            from: "07:30",
-            to: "20:00"
-          },
-          placeName: "Brussels",
+          date: "Wed June 2018 07:30",
+          city: "Brussels",
           nrOfLiked: 3,
+          fullAddress: "",
           location: {
             lat: 50.812023,
             lng: 4.383143
@@ -42,15 +38,9 @@ class App extends Component {
           title: "JUSTIN TIMBERLAKE - THE MAN OF THE WOODS TOUR",
           img:
             "http://www.breatheheavy.com/wp-content/uploads/2018/01/justin-timberlake-filthy-stream.jpg",
-          date: {
-            day: "Sunday",
-            dayNr: "17",
-            month: "July",
-            year: "2018",
-            from: "20.30",
-            to: "11.30"
-          },
-          placeName: "Sportpalis Antwerpen",
+          date: "Wed June 2018 07:30",
+          fullAddress: "",
+          city: "Sportpalis Antwerpen",
           nrOfLiked: 15,
           location: {
             lat: 51.231169,
@@ -65,16 +55,10 @@ class App extends Component {
           title: "SHAKIRA",
           img:
             "http://www.attcenter.com/assets/img/SHAKIRA_EN_2426x1365-a432e7ad87.jpg",
-          date: {
-            day: "Thursady",
-            dayNr: "07",
-            month: "June",
-            year: "2018",
-            from: "18.30",
-            to: "11.30"
-          },
+          date: "Wed June 2018 07:30",
+          fullAddress: "",
           nrOfLiked: 2,
-          placeName: "Sportpalis Antwerpen",
+          city: "Sportpalis Antwerpen",
           location: {
             lat: 51.231169,
             lng: 4.441036
@@ -88,16 +72,10 @@ class App extends Component {
           title: "BELGIAN LIONS",
           img:
             "https://images.voetbalkrant.com/sport/basketbal/2017/08/24/belgian-lions--salumu.jpg",
-          date: {
-            day: "Friday",
-            dayNr: "29",
-            month: "June",
-            year: "2018",
-            from: "20.30",
-            to: "11.30"
-          },
+          date: "Wed June 2018 07:30",
+          fullAddress: "",
           nrOfLiked: 4,
-          placeName: "Lotto Arena",
+          city: "Lotto Arena",
           location: {
             lat: 51.180514,
             lng: 4.413201
@@ -124,47 +102,110 @@ class App extends Component {
       events: tempEvents
     });
   };
+  getMinOrMax(markersObj, minOrMax, latOrLng) {
+    if (minOrMax === "max") {
+      return _.maxBy(markersObj, function(value) {
+        return value[latOrLng];
+      })[latOrLng];
+    } else {
+      return _.minBy(markersObj, function(value) {
+        return value[latOrLng];
+      })[latOrLng];
+    }
+  }
 
+  getBounds(markersObj) {
+    var maxLat = this.getMinOrMax(markersObj, "max", "lat");
+    var minLat = this.getMinOrMax(markersObj, "min", "lat");
+    var maxLng = this.getMinOrMax(markersObj, "max", "lng");
+    var minLng = this.getMinOrMax(markersObj, "min", "lng");
+
+    var southWest = [minLng, minLat];
+    var northEast = [maxLng, maxLat];
+    return [southWest, northEast];
+  }
+  getCoordinates = () => {
+    const copyEvents = [...this.state.events];
+    let coordiantes = [];
+    for (let event of copyEvents) {
+      coordiantes.push(event.location);
+    }
+    return this.getBounds(coordiantes);
+  };
+  deleteEvent = e => {
+    e.preventDefault();
+    // should edit later
+    let copyEvents = [...this.state.events];
+    const key = e.target.parentElement.getAttribute("index");
+    let keys = Object.keys(copyEvents);
+    let index = keys.indexOf(key);
+    if (index !== -1) {
+      copyEvents.splice(index, 1);
+    }
+    this.setState({
+      events: [...copyEvents]
+    });
+  };
+  addEvent = event => {
+    this.setState({
+      events: [event, ...this.state.events]
+    });
+    console.log(this.state.events);
+  };
   render() {
     return (
-      <BrowserRouter>
-        <div>
-          <Menu pointing secondary>
-            <Menu.Item
-              name="Home"
-              as={NavLink}
-              to="/"
-              activeClassName="is-active"
-              exact={true}
-              content="Home"
-            />
-            <Menu.Item
-              name="Add Event"
-              as={NavLink}
-              to="/add-event"
-              content="Add event"
-            />
-            <Menu.Item name="About" as={NavLink} to="/About" content="About" />
-          </Menu>
-          <Switch>
-            <Route exact path="/">
-              <Events
-                events={this.state.events}
-                getLikedEvents={this.getLikedEvents}
-                addToFavourite={this.addToFavourite}
+      <Container>
+        <BrowserRouter>
+          <div>
+            <Menu pointing secondary>
+              <Menu.Item
+                name="Home"
+                as={NavLink}
+                to="/"
+                activeClassName="is-active"
+                exact={true}
+                content="Home"
               />
-            </Route>
-            <Route
-              exact
-              path="/add-event"
-              render={() => <AddEvent events={this.state.events} />}
-            />
-            <Route exact path="/about" component={About} />
-            <Route component={NotFoundPage} />
-          </Switch>
-          {/* // custom footer later on will be added  */}
-        </div>
-      </BrowserRouter>
+              <Menu.Item
+                name="Add Event"
+                as={NavLink}
+                to="/add-event"
+                content="Add event"
+              />
+              <Menu.Item
+                name="About"
+                as={NavLink}
+                to="/About"
+                content="About"
+              />
+            </Menu>
+            <Switch>
+              <Route exact path="/">
+                <Events
+                  events={this.state.events}
+                  getLikedEvents={this.getLikedEvents}
+                  addToFavourite={this.addToFavourite}
+                  getCoordinates={this.getCoordinates}
+                  deleteEvent={this.deleteEvent}
+                />
+              </Route>
+              <Route
+                exact
+                path="/add-event"
+                render={() => (
+                  <AddEvent
+                    events={this.state.events}
+                    addEvent={this.addEvent}
+                  />
+                )}
+              />
+              <Route exact path="/about" component={About} />
+              <Route component={NotFoundPage} />
+            </Switch>
+            {/* // custom footer later on will be added  */}
+          </div>
+        </BrowserRouter>
+      </Container>
     );
   }
 }

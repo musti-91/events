@@ -1,33 +1,46 @@
 import React from "react";
-import { compose, withProps } from "recompose";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker
-} from "react-google-maps";
-import { Icon } from "semantic-ui-react";
+import { Icon, Popup, Button, Header } from "semantic-ui-react";
+import ReactMapboxGl, { Marker } from "react-mapbox-gl";
+import { mapStyle } from "./mapStyle";
+const Map = ReactMapboxGl({
+  accessToken:
+    "pk.eyJ1IjoibXVzaHRpIiwiYSI6ImNqaTV0YWMycTBsOXMzcW1zejBweDdwMTgifQ.s7-YuyPqzjzTJvpA_x6pmw"
+});
 
-const EventWorldMap = compose(
-  withProps({
-    googleMapURL:
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyDx1SR6AWnve0c20xub4Y_Y77l_Uydo23M&libraries=geometry,drawing,places",
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
-    mapElement: <div style={{ height: `100%` }} />
-  }),
-  withScriptjs,
-  withGoogleMap
-)(props => (
-  <div>
-    <GoogleMap defaultZoom={8} defaultCenter={{ let: -34.397, lng: 150.644 }}>
-      {props.events.map((event, index) => (
-        <Marker position={{ lat: event.location.lat, lng: event.location.lng }}>
-          <Icon name="marker" color="green" />
-          {event.placeName}
+const mapContainer = {
+  width: "100%",
+  height: "500px"
+};
+const EventWorldMap = props => (
+  <div style={mapContainer}>
+    <Map
+      style={mapStyle}
+      containerStyle={{
+        height: "100%",
+        width: "100%"
+      }}
+      fitBounds={props.getCoordinates()}
+      fitBoundsOptions={{ padding: 10, linear: true, offset: [0, 30] }}
+      animationOptions={true}
+    >
+      {props.events.map((event, key) => (
+        <Marker
+          key={key}
+          coordinates={[event.location.lng, event.location.lat]}
+          anchor="bottom"
+        >
+          <Popup
+            trigger={<Icon name="marker" color="black" size="large" />}
+            flowing
+            hoverable
+          >
+            <Header size="small">{event.title}</Header>
+            <p>{event.city}</p>
+            <Button>More info</Button>
+          </Popup>
         </Marker>
       ))}
-    </GoogleMap>
+    </Map>
   </div>
-));
+);
 export { EventWorldMap };
