@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import { BrowserRouter, Route, Switch, NavLink } from "react-router-dom";
 import Events from "./components/Events";
 import AddEvent from "./components/AddEvent";
-import About from "./components/About";
+import SearchEvents from "./components/SearchEvents";
 import NotFoundPage from "./components/NotFoundPage";
 import { Menu, Container } from "semantic-ui-react";
+import { UserArea } from "./components/UserArea";
 var _ = require("lodash");
-
+// import base from "./components/base";
 /**
  * Events app:events =>events component
  * custom footer will added later
@@ -87,7 +88,13 @@ class App extends Component {
       ]
     };
   }
-
+  // componentWillMount() {
+  //   base.syncState("events/", {
+  //     context: this,
+  //     state: "events",
+  //     asArray: true
+  //   });
+  // }
   getLikedEvents = () => {
     let events = [...this.state.events];
     events.sort((a, b) => b.nrOfLiked - a.nrOfLiked);
@@ -150,7 +157,6 @@ class App extends Component {
     this.setState({
       events: [event, ...this.state.events]
     });
-    console.log(this.state.events);
   };
   render() {
     return (
@@ -167,16 +173,22 @@ class App extends Component {
                 content="Home"
               />
               <Menu.Item
+                name="search events"
+                as={NavLink}
+                to="/search-events"
+                content="Search Event"
+              />
+              <Menu.Item
                 name="Add Event"
                 as={NavLink}
                 to="/add-event"
                 content="Add event"
               />
               <Menu.Item
-                name="About"
+                name="user area"
                 as={NavLink}
-                to="/About"
-                content="About"
+                to="/user"
+                content="User Area"
               />
             </Menu>
             <Switch>
@@ -187,7 +199,11 @@ class App extends Component {
                   addToFavourite={this.addToFavourite}
                   getCoordinates={this.getCoordinates}
                   deleteEvent={this.deleteEvent}
+                  onDetailPage={this.onDetailPage}
                 />
+              </Route>
+              <Route exact path="/search-events">
+                <SearchEvents addEvent={this.addEvent} />
               </Route>
               <Route
                 exact
@@ -199,7 +215,7 @@ class App extends Component {
                   />
                 )}
               />
-              <Route exact path="/about" component={About} />
+              <Route component={UserArea} path="/user" />
               <Route component={NotFoundPage} />
             </Switch>
             {/* // custom footer later on will be added  */}

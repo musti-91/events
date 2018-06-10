@@ -1,9 +1,13 @@
-export const validate = function(value) {
-  if (!value.checked) {
+export const validate = function(value, callback) {
+  let msg = "";
+  if (value.title === "") {
+    msg = "You need to provide title first";
     return false;
-  } else {
-    if (value.title === "") return "You need to provide title first";
-    if (value.address === "") return "full address should be provided";
-    if (value.date === "") return "date should be provided!";
   }
+  if (value.fullAddress === "") {
+    msg = "full address should be provided";
+    return false;
+  }
+  callback(msg);
+  return true;
 };

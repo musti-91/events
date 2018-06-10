@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon, Popup, Button, Header } from "semantic-ui-react";
+import { Icon, Popup, Button, Header, Modal, Image } from "semantic-ui-react";
 import ReactMapboxGl, { Marker } from "react-mapbox-gl";
 import { mapStyle } from "./mapStyle";
 const Map = ReactMapboxGl({
@@ -9,7 +9,7 @@ const Map = ReactMapboxGl({
 
 const mapContainer = {
   width: "100%",
-  height: "500px"
+  height: "650px"
 };
 const EventWorldMap = props => (
   <div style={mapContainer}>
@@ -32,11 +32,24 @@ const EventWorldMap = props => (
           <Popup
             trigger={<Icon name="marker" color="black" size="large" />}
             flowing
-            hoverable
+            on="click"
+            hideOnScroll
+            inverted
           >
             <Header size="small">{event.title}</Header>
             <p>{event.city}</p>
-            <Button>More info</Button>
+            {/* <Button onClick={props.onDetailPage}>More info</Button> */}
+            <Modal trigger={<Button>more info</Button>} centered={false}>
+              <Modal.Header>Select a Photo</Modal.Header>
+              <Modal.Content image>
+                <Modal.Description>
+                  <Header>{event.title}</Header>
+                  <p>{event.description}</p>
+                  <p>{event.date}</p>
+                  <Image wrapped size="huge" src={event.img} />
+                </Modal.Description>
+              </Modal.Content>
+            </Modal>
           </Popup>
         </Marker>
       ))}

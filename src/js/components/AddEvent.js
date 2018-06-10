@@ -4,6 +4,7 @@ import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Geocode from "react-geocode";
+
 class AddEvent extends Component {
   constructor(props) {
     super();
@@ -76,9 +77,12 @@ class AddEvent extends Component {
     });
   };
   onSubmit = e => {
+    if (this.state.title === "") {
+      console.log("error validation form");
+      return false;
+    }
     this.props.addEvent(this.state);
   };
-
   render() {
     return (
       <div>
@@ -88,6 +92,7 @@ class AddEvent extends Component {
           <Form.Group>
             <Form.Input
               fluid
+              ref={this.ref}
               label="Title"
               placeholder="title"
               width={10}
@@ -122,7 +127,7 @@ class AddEvent extends Component {
             />
           </Form.Group>
           <Form.Group>
-            <Form.Field>
+            <Form.Field width={8}>
               <label>Date & Time</label>
               <DatePicker
                 selected={moment(this.state.date)}
@@ -138,7 +143,7 @@ class AddEvent extends Component {
               fluid
               label="Full address"
               placeholder="ex: turnhoutsebaan 12, bus 30, 2140 Borgerhout"
-              width={14}
+              width={12}
               value={this.state.address}
               onChange={this.onAddressChange}
             />

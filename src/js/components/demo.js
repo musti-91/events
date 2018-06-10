@@ -1,3 +1,4 @@
+// rubbish code --will delete it after while.
 const demo = function() {
   <Map
     zoom={[0]}
