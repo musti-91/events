@@ -10,7 +10,7 @@ class AddEvent extends Component {
     super();
     this.state = {
       title: "",
-      img: "",
+      img: "https://placeimg.com/640/480/tech",
       date: moment() ? moment().toString() : "",
       nrOfLiked: 0,
       city: "",
@@ -23,6 +23,32 @@ class AddEvent extends Component {
       price: 0,
       description: ""
     };
+    // this.state = {
+    //   indexes: {
+    //     title: "",
+    //     img: "",
+    //     date: moment(),
+    //     nrOfLiked: 0,
+    //     city: "",
+    //     fullAddress: "",
+    //     location: {
+    //       lat: "",
+    //       lng: ""
+    //     },
+    //     isLiked: false,
+    //     price: "",
+    //     descrption: ""
+    //   },
+    //   errors: {
+    //     title: false,
+    //     date: false,
+    //     description: false,
+    //     fullAddress: false,
+    //     price: false,
+    //     city: false
+    //   },
+    //   addedd: false
+    // };
   }
   onTitleChange = e => {
     this.setState({
@@ -91,6 +117,7 @@ class AddEvent extends Component {
         <Form size="large" onSubmit={this.onSubmit}>
           <Form.Group>
             <Form.Input
+              name="title"
               fluid
               ref={this.ref}
               label="Title"
@@ -100,6 +127,7 @@ class AddEvent extends Component {
               value={this.state.title}
             />
             <Form.Input
+              name="city"
               fluid
               label="City, Place .."
               placeholder="ex: Antwerpen,Lotto Arena"
@@ -110,6 +138,7 @@ class AddEvent extends Component {
           </Form.Group>
           <Form.Group>
             <Form.Input
+              name="price"
               fluid
               label="Price"
               placeholder="00.00 €"
@@ -117,6 +146,7 @@ class AddEvent extends Component {
               onChange={this.onPriceChanged}
             />
             <Form.Input
+              name="upload"
               fluid
               icon="upload"
               label="Upload photo"
@@ -130,6 +160,7 @@ class AddEvent extends Component {
             <Form.Field width={8}>
               <label>Date & Time</label>
               <DatePicker
+                name="date"
                 selected={moment(this.state.date)}
                 onChange={this.onDateSelectChange}
                 showTimeSelect
@@ -140,6 +171,7 @@ class AddEvent extends Component {
               />
             </Form.Field>
             <Form.Input
+              name="address"
               fluid
               label="Full address"
               placeholder="ex: turnhoutsebaan 12, bus 30, 2140 Borgerhout"
@@ -149,6 +181,7 @@ class AddEvent extends Component {
             />
           </Form.Group>
           <Form.TextArea
+            name="description"
             label="Description"
             placeholder="describe what your event is all about"
             onChange={this.onDescriptionChange}

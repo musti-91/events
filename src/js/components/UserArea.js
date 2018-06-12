@@ -7,18 +7,18 @@ export const UserArea = props => (
     <Card width={14}>
       <Image src={image} />
       <Card.Content>
-        <Card.Header>Matthew</Card.Header>
+        <Card.Header>Mustafa Alroomi</Card.Header>
         <Card.Meta>
-          <span className="date">Joined in 2015</span>
+          <span className="date">Joined in 2018</span>
         </Card.Meta>
         <Card.Description>
-          Matthew is a musician living in Nashville.
+          Mustafa a is Web Developer and Basketball player
         </Card.Description>
       </Card.Content>
       <Card.Content extra>
         <a>
           <Icon name="user" color="green" />
-          22 Friends
+          3 Friends enough :)
         </a>
       </Card.Content>
     </Card>

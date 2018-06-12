@@ -13,7 +13,7 @@ export const EventList = props => {
                 <span className="date">{event.date}</span>
               </Card.Meta>
               <Card.Meta />
-              <span>{event.price} €</span>
+              <span>{event.price}</span>
               <Card.Description>
                 <p style={{ height: "100px" }}>{event.description}</p>
               </Card.Description>

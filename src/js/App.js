@@ -6,8 +6,9 @@ import SearchEvents from "./components/SearchEvents";
 import NotFoundPage from "./components/NotFoundPage";
 import { Menu, Container } from "semantic-ui-react";
 import { UserArea } from "./components/UserArea";
-var _ = require("lodash");
-// import base from "./components/base";
+import base from "./components/base";
+import "../css/App.css";
+import { getBounds } from "./components/helper";
 /**
  * Events app:events =>events component
  * custom footer will added later
@@ -34,67 +35,18 @@ class App extends Component {
           price: 15.99,
           description:
             "Data Innovation Summit 2018 - #DISUMMIT - A.I.Demystified"
-        },
-        {
-          title: "JUSTIN TIMBERLAKE - THE MAN OF THE WOODS TOUR",
-          img:
-            "http://www.breatheheavy.com/wp-content/uploads/2018/01/justin-timberlake-filthy-stream.jpg",
-          date: "Wed June 2018 07:30",
-          fullAddress: "",
-          city: "Sportpalis Antwerpen",
-          nrOfLiked: 15,
-          location: {
-            lat: 51.231169,
-            lng: 4.441036
-          },
-          isLiked: false,
-          price: 65.5,
-          description:
-            "Following his epic Pepsi Super Bowl LII Halftime Show performance, Justin Timberlake has announced European The Man Of The Woods Tour dates. The European leg of the tour will kick off June 22 in Paris and will make 16 stops including London, Amsterdam, Berlin, and... Antwerp! Timberlake will perform at the Sportpaleis on Tuesday 17th of July.."
-        },
-        {
-          title: "SHAKIRA",
-          img:
-            "http://www.attcenter.com/assets/img/SHAKIRA_EN_2426x1365-a432e7ad87.jpg",
-          date: "Wed June 2018 07:30",
-          fullAddress: "",
-          nrOfLiked: 2,
-          city: "Sportpalis Antwerpen",
-          location: {
-            lat: 51.231169,
-            lng: 4.441036
-          },
-          isLiked: true,
-          price: 59.99,
-          description:
-            "As previously announced, Shakira had to postpone her El Dorado World Tour due to voice problems. The concert in Antwerp on Sunday November 12 could therefore not take place."
-        },
-        {
-          title: "BELGIAN LIONS",
-          img:
-            "https://images.voetbalkrant.com/sport/basketbal/2017/08/24/belgian-lions--salumu.jpg",
-          date: "Wed June 2018 07:30",
-          fullAddress: "",
-          nrOfLiked: 4,
-          city: "Lotto Arena",
-          location: {
-            lat: 51.180514,
-            lng: 4.413201
-          },
-          isLiked: true,
-          price: 30.99,
-          description: "FIBA World Cup Qualifiers"
         }
       ]
     };
   }
-  // componentWillMount() {
-  //   base.syncState("events/", {
-  //     context: this,
-  //     state: "events",
-  //     asArray: true
-  //   });
-  // }
+  componentDidMount() {
+    base.syncState("events/", {
+      context: this,
+      state: "events",
+      asArray: true
+    });
+    console.log(this.state.events);
+  }
   getLikedEvents = () => {
     let events = [...this.state.events];
     events.sort((a, b) => b.nrOfLiked - a.nrOfLiked);
@@ -109,35 +61,14 @@ class App extends Component {
       events: tempEvents
     });
   };
-  getMinOrMax(markersObj, minOrMax, latOrLng) {
-    if (minOrMax === "max") {
-      return _.maxBy(markersObj, function(value) {
-        return value[latOrLng];
-      })[latOrLng];
-    } else {
-      return _.minBy(markersObj, function(value) {
-        return value[latOrLng];
-      })[latOrLng];
-    }
-  }
 
-  getBounds(markersObj) {
-    var maxLat = this.getMinOrMax(markersObj, "max", "lat");
-    var minLat = this.getMinOrMax(markersObj, "min", "lat");
-    var maxLng = this.getMinOrMax(markersObj, "max", "lng");
-    var minLng = this.getMinOrMax(markersObj, "min", "lng");
-
-    var southWest = [minLng, minLat];
-    var northEast = [maxLng, maxLat];
-    return [southWest, northEast];
-  }
   getCoordinates = () => {
     const copyEvents = [...this.state.events];
-    let coordiantes = [];
+    let coordinates = [];
     for (let event of copyEvents) {
-      coordiantes.push(event.location);
+      coordinates.push(event.location);
     }
-    return this.getBounds(coordiantes);
+    return getBounds(coordinates);
   };
   deleteEvent = e => {
     e.preventDefault();

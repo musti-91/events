@@ -27,7 +27,7 @@ class SearchEvents extends Component {
       return false;
     }
     Axios.get(
-      "https://app.ticketmaster.com/discovery/v2/events.json?apikey=&keyword=" +
+      "https://app.ticketmaster.com/discovery/v2/events.json?apikey=7elxdku9GGG5k8j0Xm8KWdANDgecHMV0&keyword=" +
         value
     )
       .then(response => {
@@ -51,10 +51,11 @@ class SearchEvents extends Component {
               lng: parseInt(event._embedded.venues[0].location.longitude)
             },
             isLiked: false,
-            price: event.priceRanges[0].min + event.priceRanges[0].currency,
+            price: event.priceRanges[0].min,
             description: event.pleaseNote
           };
           this.setState({
+            trem: "",
             events: [retrivedEvent, ...this.state.events]
           });
         });
