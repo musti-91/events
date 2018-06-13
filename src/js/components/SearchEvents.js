@@ -85,6 +85,7 @@ class SearchEvents extends Component {
           <Header size="large">Search Event</Header>
           <Form onSubmit={this.onFormSubmit}>
             <Form.Input
+              class="ui massive icon input"
               label="Event name"
               placeholder="Search between 1000 events over the world"
               width={8}

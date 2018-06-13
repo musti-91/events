@@ -4,12 +4,18 @@ import Events from "./components/Events";
 import AddEvent from "./components/AddEvent";
 import SearchEvents from "./components/SearchEvents";
 import NotFoundPage from "./components/NotFoundPage";
-import { Menu, Container } from "semantic-ui-react";
+import { Menu, Container, Dimmer, Loader, Icon } from "semantic-ui-react";
 import { UserArea } from "./components/UserArea";
-import base from "./components/base";
 import "../css/App.css";
 import { getBounds } from "./components/helper";
+import firebase from "firebase/app";
+import "firebase/auth";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import base, { uiConfig } from "./components/base";
+import Link from "react-router-dom/Link";
+
 /**
+ *
  * Events app:events =>events component
  * custom footer will added later
  * custom build actually
@@ -18,34 +24,26 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      events: [
-        {
-          title: "Data Innovation Summit 2018 - #DISUMMIT - A.I.Demystified",
-          img:
-            "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F44571561%2F231918327288%2F1%2Foriginal.jpg?h=150&w=300&auto=compress&rect=0%2C198%2C842%2C421&s=ae8a4c0c9dd04a07357d5cf4f104fd90",
-          date: "Wed June 2018 07:30",
-          city: "Brussels",
-          nrOfLiked: 3,
-          fullAddress: "",
-          location: {
-            lat: 50.812023,
-            lng: 4.383143
-          },
-          isLiked: false,
-          price: 15.99,
-          description:
-            "Data Innovation Summit 2018 - #DISUMMIT - A.I.Demystified"
-        }
-      ]
+      isLoggedIn: false,
+      loadingEvents: true,
+      events: []
     };
   }
   componentDidMount() {
     base.syncState("events/", {
       context: this,
       state: "events",
-      asArray: true
+      asArray: true,
+      then: () => {
+        this.setState({ loadingEvents: false });
+      }
     });
-    console.log(this.state.events);
+    this.unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged(user => this.setState({ isLoggedIn: !!user }));
+  }
+  componentWillUnmount() {
+    this.unregisterAuthObserver();
   }
   getLikedEvents = () => {
     let events = [...this.state.events];
@@ -96,12 +94,12 @@ class App extends Component {
           <div>
             <Menu pointing secondary>
               <Menu.Item
-                name="Home"
+                name="events"
                 as={NavLink}
                 to="/"
+                content="Events"
                 activeClassName="is-active"
                 exact={true}
-                content="Home"
               />
               <Menu.Item
                 name="search events"
@@ -121,31 +119,67 @@ class App extends Component {
                 to="/user"
                 content="User Area"
               />
+              <Menu.Item name="login" as={NavLink} to="/login">
+                <Icon name="sign in" />
+              </Menu.Item>
             </Menu>
+            {this.state.loadingEvents && (
+              <Dimmer active inverted>
+                <Loader inverted content="Loading" />
+              </Dimmer>
+            )}
             <Switch>
               <Route exact path="/">
-                <Events
-                  events={this.state.events}
-                  getLikedEvents={this.getLikedEvents}
-                  addToFavourite={this.addToFavourite}
-                  getCoordinates={this.getCoordinates}
-                  deleteEvent={this.deleteEvent}
-                  onDetailPage={this.onDetailPage}
-                />
+                {!this.state.loadingEvents && (
+                  <Events
+                    loading={this.state.loading}
+                    events={this.state.events}
+                    getLikedEvents={this.getLikedEvents}
+                    addToFavourite={this.addToFavourite}
+                    getCoordinates={this.getCoordinates}
+                    deleteEvent={this.deleteEvent}
+                    onDetailPage={this.onDetailPage}
+                  />
+                )}
               </Route>
               <Route exact path="/search-events">
                 <SearchEvents addEvent={this.addEvent} />
               </Route>
-              <Route
-                exact
-                path="/add-event"
-                render={() => (
-                  <AddEvent
-                    events={this.state.events}
-                    addEvent={this.addEvent}
-                  />
+              <Route exact path="/login">
+                <div>
+                  {!this.state.isLoggedIn && (
+                    <div>
+                      <h1>Please Sign in</h1>
+                      <StyledFirebaseAuth
+                        uiConfig={uiConfig}
+                        firebaseAuth={firebase.auth()}
+                      />
+                    </div>
+                  )}
+                  {this.state.isLoggedIn && (
+                    <div>
+                      <h1>My App</h1>
+                      <p>
+                        Welcome {firebase.auth().currentUser.displayName}! You
+                        are now signed-in!
+                      </p>
+                      <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
+                    </div>
+                  )}
+                </div>
+              </Route>
+              <Route exact path="/add-event">
+                {this.state.isLoggedIn ? (
+                  <AddEvent addEvent={this.addEvent} />
+                ) : (
+                  <div>
+                    <h1>You need to log in.</h1>
+                    <p>
+                      Go to<Link to="/login">login page</Link>
+                    </p>
+                  </div>
                 )}
-              />
+              </Route>
               <Route component={UserArea} path="/user" />
               <Route component={NotFoundPage} />
             </Switch>

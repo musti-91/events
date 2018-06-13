@@ -3,7 +3,8 @@ import { Icon, Popup, Button, Header, Modal, Image } from "semantic-ui-react";
 import ReactMapboxGl, { Marker } from "react-mapbox-gl";
 import { mapStyle } from "./mapStyle";
 const Map = ReactMapboxGl({
-  accessToken: "pk.xxxxx"
+  accessToken:
+    "pk.eyJ1IjoibXVzaHRpIiwiYSI6ImNqaTV0YWMycTBsOXMzcW1zejBweDdwMTgifQ.s7-YuyPqzjzTJvpA_x6pmw"
 });
 
 const mapContainer = {

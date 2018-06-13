@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, Icon, Image, Sidebar, Segment, Button } from "semantic-ui-react";
+import moment from "moment";
 export const EventList = props => {
   return (
     <Sidebar.Pushable as={Segment}>
@@ -10,10 +11,12 @@ export const EventList = props => {
             <Card.Content>
               <Card.Header>{event.title}</Card.Header>
               <Card.Meta>
-                <span className="date">{event.date}</span>
+                <span className="date">
+                  {moment.unix(event.date).format("ddd DD-MM-YYYY HH:mm")}
+                </span>
               </Card.Meta>
               <Card.Meta />
-              <span>{event.price}</span>
+              <span>Ticket: {event.price} €</span>
               <Card.Description>
                 <p style={{ height: "100px" }}>{event.description}</p>
               </Card.Description>
