@@ -5,13 +5,21 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
+import firebase from "firebase/app";
+import "firebase/storage";
+import FileUploader from "react-firebase-file-uploader";
 class AddEvent extends Component {
   constructor(props) {
     super();
     this.state = {
       fields: {
         title: "",
-        img: "",
+        img: {
+          name: "",
+          isUploading: false,
+          progress: 0,
+          url: ""
+        },
         date: moment(),
         nrOfLiked: 0,
         city: "",
@@ -83,12 +91,39 @@ class AddEvent extends Component {
       );
     }
   };
-
+  handleUploadStart = () =>
+    this.setState({
+      img: {
+        isUploading: true,
+        progress: 0
+      }
+    });
+  handleProgress = progress => this.setState({ img: { progress: progress } });
+  handleUploadError = error => {
+    this.setState({ img: { isUploading: false } });
+    console.error(error);
+  };
+  handleUploadSuccess = filename => {
+    this.setState({
+      img: {
+        name: filename,
+        progress: 100,
+        isUploading: false
+      }
+    });
+    firebase
+      .storage()
+      .ref("images")
+      .child(filename)
+      .getDownloadURL()
+      .then(url => this.setState({ img: { url: url } }));
+  };
   onSubmit = e => {
+    e.preventDefault();
     if (this.validate()) {
       this.props.addEvent({
         title: this.state.fields.title,
-        img: this.state.fields.img,
+        img: this.state.fields.img.url,
         date: this.state.fields.date.format("X"),
         nrOfLiked: 0,
         city: this.state.fields.city,
@@ -164,16 +199,15 @@ class AddEvent extends Component {
               width={4}
               onChange={this.onFieldsChange}
             />
-            <Form.Input
-              name="upload"
-              fluid
-              icon="upload"
-              label="Cover Image"
-              placeholder="uploaed image"
-              width={6}
-              type="file"
-              onChange={this.onFieldsChange}
-              error={this.state.errors.img}
+            <FileUploader
+              accept="image/*"
+              name="cover"
+              randomizeFilename
+              storageRef={firebase.storage().ref("images")}
+              onUploadStart={this.handleUploadStart}
+              onUploadError={this.handleUploadError}
+              onUploadSuccess={this.handleUploadSuccess}
+              onProgress={this.handleProgress}
             />
           </Form.Group>
           <Form.Group>

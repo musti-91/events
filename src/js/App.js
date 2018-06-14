@@ -1,21 +1,24 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch, NavLink } from "react-router-dom";
+import { Menu, Container, Dimmer, Loader, Icon } from "semantic-ui-react";
+import firebase from "firebase/app";
+import "firebase/auth";
+import Link from "react-router-dom/Link";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import { Animated } from "react-animated-css";
+
 import Events from "./components/Events";
 import AddEvent from "./components/AddEvent";
 import SearchEvents from "./components/SearchEvents";
 import NotFoundPage from "./components/NotFoundPage";
-import { Menu, Container, Dimmer, Loader, Icon } from "semantic-ui-react";
 import { UserArea } from "./components/UserArea";
-import "../css/App.css";
 import { getBounds } from "./components/helper";
-import firebase from "firebase/app";
-import "firebase/auth";
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import base, { uiConfig } from "./components/base";
-import Link from "react-router-dom/Link";
+
+import "../index.css";
 
 /**
- *
+ * convention arrange of import
  * Events app:events =>events component
  * custom footer will added later
  * custom build actually
@@ -130,17 +133,23 @@ class App extends Component {
             )}
             <Switch>
               <Route exact path="/">
-                {!this.state.loadingEvents && (
-                  <Events
-                    loading={this.state.loading}
-                    events={this.state.events}
-                    getLikedEvents={this.getLikedEvents}
-                    addToFavourite={this.addToFavourite}
-                    getCoordinates={this.getCoordinates}
-                    deleteEvent={this.deleteEvent}
-                    onDetailPage={this.onDetailPage}
-                  />
-                )}
+                <Animated
+                  animationIn="bounceInLeft"
+                  animationOut="fadeOut"
+                  isVisible={true}
+                >
+                  {!this.state.loadingEvents && (
+                    <Events
+                      loading={this.state.loading}
+                      events={this.state.events}
+                      getLikedEvents={this.getLikedEvents}
+                      addToFavourite={this.addToFavourite}
+                      getCoordinates={this.getCoordinates}
+                      deleteEvent={this.deleteEvent}
+                      onDetailPage={this.onDetailPage}
+                    />
+                  )}
+                </Animated>
               </Route>
               <Route exact path="/search-events">
                 <SearchEvents addEvent={this.addEvent} />
@@ -175,7 +184,7 @@ class App extends Component {
                   <div>
                     <h1>You need to log in.</h1>
                     <p>
-                      Go to<Link to="/login">login page</Link>
+                      Go to <Link to="/login">login page</Link>
                     </p>
                   </div>
                 )}

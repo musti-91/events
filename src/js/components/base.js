@@ -2,14 +2,7 @@ import firebase from "firebase/app";
 import "firebase/database";
 import "firebase/auth";
 let Rebase = require("re-base");
-var app = firebase.initializeApp({
-  apiKey: "AIzaSyAlQSiXryvrsj86yEObuUfWY5TGXVqtouw",
-  authDomain: "events-meraki-f3671.firebaseapp.com",
-  databaseURL: "https://events-meraki-f3671.firebaseio.com",
-  projectId: "events-meraki-f3671",
-  storageBucket: "events-meraki-f3671.appspot.com",
-  messagingSenderId: "49386294021"
-});
+var app = firebase.initializeApp({});
 let db = firebase.database(app);
 const base = Rebase.createClass(db);
 const uiConfig = {

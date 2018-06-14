@@ -27,7 +27,7 @@ class SearchEvents extends Component {
       return false;
     }
     Axios.get(
-      "https://app.ticketmaster.com/discovery/v2/events.json?apikey=7elxdku9GGG5k8j0Xm8KWdANDgecHMV0&keyword=" +
+      "https://app.ticketmaster.com/discovery/v2/events.json?apikey=xxx&keyword=" +
         value
     )
       .then(response => {
