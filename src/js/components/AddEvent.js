@@ -3,23 +3,16 @@ import { Form, Button, Icon, Header, Message } from "semantic-ui-react";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
-import firebase from "firebase/app";
-import "firebase/storage";
-import FileUploader from "react-firebase-file-uploader";
+import Geocode from "react-geocode";
+import ImageUploader from "./ImageUploader";
 class AddEvent extends Component {
   constructor(props) {
     super();
     this.state = {
       fields: {
         title: "",
-        img: {
-          name: "",
-          isUploading: false,
-          progress: 0,
-          url: ""
-        },
+        imgUrl: "",
         date: moment(),
         nrOfLiked: 0,
         city: "",
@@ -67,21 +60,44 @@ class AddEvent extends Component {
   };
   onDateSelectChange = date => {
     this.setState({
-      date: date
+      fields: {
+        title: this.state.fields.title,
+        imgUrl: this.state.fields.imgUrl,
+        date: date,
+        nrOfLiked: 0,
+        city: this.state.fields.city,
+        fullAddress: this.state.fields.fullAddress,
+        location: {
+          lat: this.state.fields.location.lat,
+          lng: this.state.fields.location.lng
+        },
+        isLiked: false,
+        price: this.state.fields.price,
+        description: this.state.fields.description
+      }
     });
   };
 
   onAddressChange = e => {
     if (e.target.value === "") {
-      return false;
+      this.setState({
+        fields: {
+          location: {
+            lat: 51.24602,
+            lan: 4.311643
+          }
+        }
+      });
     } else {
       Geocode.fromAddress(e.target.value).then(
         response => {
           const { lat, lng } = response.results[0].geometry.location;
           this.setState({
-            location: {
-              lat: lat,
-              lng: lng
+            fields: {
+              location: {
+                lat: lat,
+                lng: lng
+              }
             }
           });
         },
@@ -91,39 +107,31 @@ class AddEvent extends Component {
       );
     }
   };
-  handleUploadStart = () =>
+  uploadImage = imgUrl => {
     this.setState({
-      img: {
-        isUploading: true,
-        progress: 0
+      fields: {
+        title: this.state.fields.title,
+        imgUrl: imgUrl,
+        date: moment(),
+        nrOfLiked: 0,
+        city: this.state.fields.city,
+        fullAddress: this.state.fields.fullAddress,
+        location: {
+          lat: this.state.fields.location.lat,
+          lng: this.state.fields.location.lng
+        },
+        isLiked: false,
+        price: this.state.fields.price,
+        description: this.state.fields.description
       }
     });
-  handleProgress = progress => this.setState({ img: { progress: progress } });
-  handleUploadError = error => {
-    this.setState({ img: { isUploading: false } });
-    console.error(error);
-  };
-  handleUploadSuccess = filename => {
-    this.setState({
-      img: {
-        name: filename,
-        progress: 100,
-        isUploading: false
-      }
-    });
-    firebase
-      .storage()
-      .ref("images")
-      .child(filename)
-      .getDownloadURL()
-      .then(url => this.setState({ img: { url: url } }));
   };
   onSubmit = e => {
     e.preventDefault();
     if (this.validate()) {
       this.props.addEvent({
         title: this.state.fields.title,
-        img: this.state.fields.img.url,
+        img: this.state.fields.imgUrl,
         date: this.state.fields.date.format("X"),
         nrOfLiked: 0,
         city: this.state.fields.city,
@@ -136,7 +144,7 @@ class AddEvent extends Component {
       this.setState({
         fields: {
           title: "",
-          img: "",
+          imgUrl: "",
           date: moment(),
           nrOfLiked: 0,
           city: "",
@@ -153,6 +161,7 @@ class AddEvent extends Component {
       });
     }
   };
+
   render() {
     return (
       <div>
@@ -199,23 +208,11 @@ class AddEvent extends Component {
               width={4}
               onChange={this.onFieldsChange}
             />
-            <FileUploader
-              accept="image/*"
-              name="cover"
-              randomizeFilename
-              storageRef={firebase.storage().ref("images")}
-              onUploadStart={this.handleUploadStart}
-              onUploadError={this.handleUploadError}
-              onUploadSuccess={this.handleUploadSuccess}
-              onProgress={this.handleProgress}
-            />
-          </Form.Group>
-          <Form.Group>
             <Form.Field width={8}>
-              <label>Date & Time</label>
+              <label>Date &amp; Time</label>
               <DatePicker
                 name="date"
-                selected={moment(this.state.date)}
+                selected={this.state.fields.date}
                 onChange={this.onDateSelectChange}
                 showTimeSelect
                 timeFormat="HH:mm"
@@ -224,6 +221,9 @@ class AddEvent extends Component {
                 timeCaption="time"
               />
             </Form.Field>
+            <ImageUploader uploadImage={this.uploadImage} />
+          </Form.Group>
+          <Form.Group>
             <Form.Input
               name="address"
               fluid

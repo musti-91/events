@@ -5,6 +5,11 @@ import { Animated } from "react-animated-css";
 // import { CSSTransitionGroup } from "react-transition-group";
 // import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
+const imageStyle = {
+  width: "100%",
+  height: "100%",
+  display: "block"
+};
 const EventList = props => {
   return (
     <Sidebar.Pushable as={Segment}>
@@ -18,8 +23,8 @@ const EventList = props => {
             animationInDelay={300 * index}
             animationOutDelay={200}
           >
-            <Card fluid key={index} className="ui fluid card">
-              <Image src={event.img} alt={event.title} />
+            <Card fluid key={index}>
+              <Image src={event.img} alt={event.title} style={imageStyle} />
               <Card.Content>
                 <Card.Header>{event.title}</Card.Header>
                 <Card.Meta>

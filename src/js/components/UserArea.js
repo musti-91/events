@@ -1,8 +1,10 @@
 import React from "react";
-import { Header, Container, Image, Card, Icon } from "semantic-ui-react";
+import { Header, Image, Card, Icon } from "semantic-ui-react";
 import image from "../../images/matthew.png";
+import { Animated } from "react-animated-css";
+
 export const UserArea = props => (
-  <Container>
+  <Animated animationIn="SlideInDown" animationOut="fadeOut">
     <Header color="green" size="huge" />
     <Card width={14}>
       <Image src={image} />
@@ -18,9 +20,9 @@ export const UserArea = props => (
       <Card.Content extra>
         <a>
           <Icon name="user" color="green" />
-          3 Friends enough :)
+          3 Friends
         </a>
       </Card.Content>
     </Card>
-  </Container>
+  </Animated>
 );

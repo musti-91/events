@@ -10,7 +10,6 @@
     "cors": "2.8.4",
     "firebase": "5.0.4",
     "firebase-admin": "5.12.1",
-    "firebase-functions": "1.0.4",
     "lodash": "4.17.10",
     "mapbox-gl": "0.45.0",
     "moment": "2.22.2",
@@ -34,7 +33,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && serve -s build",
+    "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

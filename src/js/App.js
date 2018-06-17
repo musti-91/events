@@ -134,7 +134,7 @@ class App extends Component {
             <Switch>
               <Route exact path="/">
                 <Animated
-                  animationIn="bounceInLeft"
+                  animationIn="SlideInDown"
                   animationOut="fadeOut"
                   isVisible={true}
                 >

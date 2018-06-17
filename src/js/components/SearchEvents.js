@@ -27,7 +27,7 @@ class SearchEvents extends Component {
       return false;
     }
     Axios.get(
-      "https://app.ticketmaster.com/discovery/v2/events.json?apikey=xxx&keyword=" +
+      "https://app.ticketmaster.com/discovery/v2/events.json?apikey=7elxdku9GGG5k8j0Xm8KWdANDgecHMV0&keyword=" +
         value
     )
       .then(response => {
@@ -47,8 +47,8 @@ class SearchEvents extends Component {
             nrOfLiked: 0,
             fullAddress: fullAddress,
             location: {
-              lat: parseInt(event._embedded.venues[0].location.latitude),
-              lng: parseInt(event._embedded.venues[0].location.longitude)
+              lat: parseInt(event._embedded.venues[0].location.latitude, 10),
+              lng: parseInt(event._embedded.venues[0].location.longitude, 10)
             },
             isLiked: false,
             price: event.priceRanges[0].min,
@@ -70,9 +70,8 @@ class SearchEvents extends Component {
     });
   };
   onAddEvent = e => {
-    const index = parseInt(e.target.parentElement.getAttribute("index", 10));
+    const index = parseInt(e.target.parentElement.getAttribute("index"), 10);
     this.state.events.map((event, key) => {
-      console.log(key, index);
       if (key === index) {
         this.props.addEvent(event);
       }
