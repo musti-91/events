@@ -4,7 +4,6 @@ import { Grid, Segment } from "semantic-ui-react";
 import { EventList } from "./EventList";
 import { EventWorldMap } from "./EventWorldMap";
 import { Slider } from "./Slider";
-
 const Events = props => (
   <Grid columns={2} divided container stackable>
     <Grid.Row stretched>

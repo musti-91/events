@@ -5,7 +5,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import Link from "react-router-dom/Link";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import { Animated } from "react-animated-css";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import Events from "./components/Events";
 import AddEvent from "./components/AddEvent";
@@ -23,6 +23,14 @@ import "../index.css";
  * custom footer will added later
  * custom build actually
  */
+const animation = {
+  appear: "animated",
+  appearActive: "fadeIn",
+  enter: "animated",
+  enterActive: "bounceInDown",
+  exit: "animated",
+  exitActive: "slideOutRight"
+};
 class App extends Component {
   constructor() {
     super();
@@ -133,26 +141,36 @@ class App extends Component {
             )}
             <Switch>
               <Route exact path="/">
-                <Animated
-                  animationIn="SlideInDown"
-                  animationOut="fadeOut"
-                  isVisible={true}
-                >
-                  {!this.state.loadingEvents && (
-                    <Events
-                      loading={this.state.loading}
-                      events={this.state.events}
-                      getLikedEvents={this.getLikedEvents}
-                      addToFavourite={this.addToFavourite}
-                      getCoordinates={this.getCoordinates}
-                      deleteEvent={this.deleteEvent}
-                      onDetailPage={this.onDetailPage}
-                    />
-                  )}
-                </Animated>
+                {!this.state.loadingEvents && (
+                  <TransitionGroup>
+                    <CSSTransition
+                      classNames={animation}
+                      appear={true}
+                      timeout={900}
+                    >
+                      <Events
+                        loading={this.state.loading}
+                        events={this.state.events}
+                        getLikedEvents={this.getLikedEvents}
+                        addToFavourite={this.addToFavourite}
+                        getCoordinates={this.getCoordinates}
+                        deleteEvent={this.deleteEvent}
+                        onDetailPage={this.onDetailPage}
+                      />
+                    </CSSTransition>
+                  </TransitionGroup>
+                )}
               </Route>
               <Route exact path="/search-events">
-                <SearchEvents addEvent={this.addEvent} />
+                <TransitionGroup>
+                  <CSSTransition
+                    classNames={animation}
+                    appear={true}
+                    timeout={1200}
+                  >
+                    <SearchEvents addEvent={this.addEvent} />
+                  </CSSTransition>
+                </TransitionGroup>
               </Route>
               <Route exact path="/login">
                 <div>
@@ -192,7 +210,6 @@ class App extends Component {
               <Route component={UserArea} path="/user" />
               <Route component={NotFoundPage} />
             </Switch>
-            {/* // custom footer later on will be added  */}
           </div>
         </BrowserRouter>
       </Container>

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import firebase from "firebase/app";
 import "firebase/storage";
 import FileUploader from "react-firebase-file-uploader";
-
 const style = {
   backgroundColor: "rgba(0,0,0,0.6)",
   color: "white",
